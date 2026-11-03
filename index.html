@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#050505">
   <meta name="description" content="Uma transmissão especial de Vini para Yan. Conexão estabelecida, para sempre.">
-  <title>Para Yan, parceiro das noites estranhas</title>
+  <title>Para Yan, meu amor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
@@ -67,7 +67,6 @@
         rgba(0, 0, 0, 0) 72%
       );
       mix-blend-mode: screen;
-      transition: background-position .08s linear;
     }
 
     body::after {
@@ -381,6 +380,13 @@
       border: 0;
       border-radius: 3px;
       filter: saturate(.72);
+    }
+
+    .monitor__hint {
+      margin: .55rem 2px 0;
+      color: #aaa6b4;
+      font-size: .55rem;
+      line-height: 1.5;
     }
 
     .hero__coordinates {
@@ -1034,7 +1040,7 @@
       <p class="hero__eyebrow">Câmera 01 <span>·</span> arquivo do coração</p>
       <h1 class="glitch" id="hero-title">
         <span>Para o <span class="hero__name">Yan,</span></span>
-        <span class="hero__love">parceiro das noites estranhas.</span>
+        <span class="hero__love">meu amor.</span>
       </h1>
       <p class="hero__subtitle">Boa música, histórias sombrias e você por perto.</p>
 
@@ -1048,8 +1054,10 @@
           src="https://open.spotify.com/embed/track/2K9kZpwD2CzTa6iiSYYOoO?utm_source=generator&amp;t=28"
           height="152"
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          aria-describedby="spotify-autoplay-note"
           loading="lazy">
         </iframe>
+        <p class="monitor__hint" id="spotify-autoplay-note">Seu navegador pode bloquear a reprodução automática. Toque no player para iniciar a música.</p>
       </div>
       <div class="hero__coordinates" aria-hidden="true">
         <span>41° 23' 08" N</span>
@@ -1127,7 +1135,7 @@
     <span class="signature">Com carinho, Vini</span>
   </footer>
 
-  <div class="surprise" id="surprise" role="dialog" aria-modal="true" aria-label="Sinal secreto">
+  <div class="surprise" id="surprise" role="dialog" aria-modal="true" aria-label="Sinal secreto" tabindex="-1">
     <div class="surprise__content">
       <div class="pixel-heart" id="pixel-heart" aria-hidden="true"></div>
       <p class="surprise__message">I ALWAYS COME BACK...<br><span>FOR YOU.</span></p>
@@ -1144,10 +1152,24 @@
     const easterEgg = document.querySelector("#easter-egg");
     const pixelHeart = document.querySelector("#pixel-heart");
 
-    // A lanterna atualiza as variáveis CSS com a posição do ponteiro, revelando o cenário escuro ao redor.
+    // Limita as atualizações da lanterna a uma por quadro para evitar trabalho repetido durante o movimento.
+    const rootStyle = document.documentElement.style;
+    let pointerX = 0;
+    let pointerY = 0;
+    let pointerFramePending = false;
+
     window.addEventListener("pointermove", (event) => {
-      document.documentElement.style.setProperty("--light-x", `${event.clientX}px`);
-      document.documentElement.style.setProperty("--light-y", `${event.clientY}px`);
+      if (event.pointerType !== "mouse") return;
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      if (pointerFramePending) return;
+
+      pointerFramePending = true;
+      window.requestAnimationFrame(() => {
+        rootStyle.setProperty("--light-x", `${pointerX}px`);
+        rootStyle.setProperty("--light-y", `${pointerY}px`);
+        pointerFramePending = false;
+      });
     }, { passive: true });
 
     // A sequência de boot permanece visível por três segundos antes de liberar a transmissão.
@@ -1205,12 +1227,23 @@
         if (pixel !== "1") return;
         const square = document.createElement("span");
         square.className = `pixel ${((rowIndex + columnIndex) % 3 === 0) ? "pixel--blue" : "pixel--violet"}`;
+        square.style.gridColumn = String(columnIndex + 1);
+        square.style.gridRow = String(rowIndex + 1);
         pixelHeart.append(square);
       });
     });
 
     // O easter egg faz um flicker breve e remove o recado da tela depois de dois segundos.
     let surpriseTimer;
+
+    function closeSurprise() {
+      window.clearTimeout(surpriseTimer);
+      surprise.classList.remove("is-active");
+      surprise.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("is-flickering");
+      easterEgg.focus();
+    }
+
     easterEgg.addEventListener("click", () => {
       window.clearTimeout(surpriseTimer);
       document.body.classList.remove("is-flickering");
@@ -1218,19 +1251,15 @@
       document.body.classList.add("is-flickering");
       surprise.classList.add("is-active");
       surprise.setAttribute("aria-hidden", "false");
+      surprise.focus();
       surpriseTimer = window.setTimeout(() => {
-        surprise.classList.remove("is-active");
-        surprise.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("is-flickering");
+        closeSurprise();
       }, 2000);
     });
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && surprise.classList.contains("is-active")) {
-        window.clearTimeout(surpriseTimer);
-        surprise.classList.remove("is-active");
-        surprise.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("is-flickering");
+        closeSurprise();
       }
     });
   </script>
