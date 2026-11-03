@@ -589,18 +589,21 @@
     }
 
     .interest-card:hover,
-    .interest-card:focus-within {
+    .interest-card:focus-within,
+    .interest-card.is-active {
       transform: translateY(-4px);
     }
 
     .interest-card--spell:hover,
-    .interest-card--spell:focus-within {
+    .interest-card--spell:focus-within,
+    .interest-card--spell.is-active {
       border-color: rgba(173, 114, 233, .66);
       box-shadow: 0 18px 50px rgba(96, 42, 136, .17);
     }
 
     .interest-card--horror:hover,
-    .interest-card--horror:focus-within {
+    .interest-card--horror:focus-within,
+    .interest-card--horror.is-active {
       border-color: rgba(120, 149, 255, .54);
       box-shadow: 0 18px 50px rgba(42, 53, 117, .18);
     }
@@ -641,8 +644,27 @@
       transition: color .3s ease;
     }
 
+    .card-reveal {
+      max-width: 390px;
+      margin: .85rem 0 0;
+      padding: .7rem .85rem;
+      border-left: 1px solid var(--violet);
+      background: rgba(173, 114, 233, .08);
+      color: var(--paper);
+      font-family: var(--serif);
+      font-size: .88rem;
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    .interest-card--horror .card-reveal {
+      border-color: var(--blue);
+      background: rgba(120, 149, 255, .08);
+    }
+
     .interest-card:hover .interest-card__copy,
-    .interest-card:focus-within .interest-card__copy {
+    .interest-card:focus-within .interest-card__copy,
+    .interest-card.is-active .interest-card__copy {
       color: var(--paper);
     }
 
@@ -695,13 +717,15 @@
     }
 
     .interest-card--spell:hover .spell-art::before,
-    .interest-card--spell:focus-within .spell-art::before {
+    .interest-card--spell:focus-within .spell-art::before,
+    .interest-card--spell.is-active .spell-art::before {
       box-shadow: inset 8px 0 0 rgba(138, 82, 176, .21), 0 0 34px rgba(173, 114, 233, .45);
       transform: rotate(3deg) translateY(-5px);
     }
 
     .interest-card--spell:hover .spell-art::after,
-    .interest-card--spell:focus-within .spell-art::after {
+    .interest-card--spell:focus-within .spell-art::after,
+    .interest-card--spell.is-active .spell-art::after {
       color: #e7c9ff;
       text-shadow: 0 0 30px rgba(196, 128, 249, .95);
     }
@@ -720,7 +744,8 @@
     }
 
     .interest-card--spell:hover .spell-symbols,
-    .interest-card--spell:focus-within .spell-symbols {
+    .interest-card--spell:focus-within .spell-symbols,
+    .interest-card--spell.is-active .spell-symbols {
       color: rgba(218, 188, 242, .73);
     }
 
@@ -759,7 +784,8 @@
     }
 
     .interest-card--horror:hover .hotel-art::after,
-    .interest-card--horror:focus-within .hotel-art::after {
+    .interest-card--horror:focus-within .hotel-art::after,
+    .interest-card--horror.is-active .hotel-art::after {
       opacity: .35;
       animation: static-shift .22s steps(2, end) infinite;
     }
@@ -773,10 +799,19 @@
       align-items: center;
       gap: .5rem;
       margin-top: 1.1rem;
+      padding: 0;
+      border: 0;
+      background: transparent;
       color: var(--violet-bright);
       font-size: .61rem;
       letter-spacing: .1em;
       text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .card-prompt:focus-visible {
+      outline: 1px solid currentColor;
+      outline-offset: 5px;
     }
 
     .interest-card--horror .card-prompt { color: var(--blue-soft); }
@@ -1080,7 +1115,7 @@
           <span>Nota pessoal // não apagar</span>
           <span>Conexão segura</span>
         </div>
-        <p class="message-copy" id="message-copy" aria-label="No meio de noites estranhas e histórias sombrias, gosto de ter você por perto. Dividir o tempo com você deixa os dias melhores e os pesadelos menos convincentes."><span id="message-text"></span><span class="type-cursor" id="type-cursor" aria-hidden="true"></span></p>
+        <p class="message-copy" id="message-copy" aria-label="E, vida... Finalmente deu certo. Depois de tantas coisas, amores e sentimentos, agora posso te chamar de meu amor, meu namorado, minha vida. Só quero te dizer que eu te amo. Minha vida contigo fica mais leve. Gosto de te admirar, às vezes discretamente e às vezes não. Não vou mentir: eu sempre te amei, mas nem eu sabia que era tanto amor assim. Agora tenho absoluta certeza: nunca amei alguém de verdade, pois ninguém chegou perto de um centésimo do amor que sinto por você. Vida, eu realmente te amo, e acho que nem vou saber o quanto. Às vezes me pego rindo do nada das bobeiras que você fala, imaginando nossa vida juntos. Eu te amo, meu amor. Você é toda a minha vida e nem sabe."><span id="message-text"></span><span class="type-cursor" id="type-cursor" aria-hidden="true"></span></p>
         <p class="message-signoff">Com carinho, sem pressa.</p>
       </div>
     </section>
@@ -1095,7 +1130,7 @@
       </div>
 
       <div class="interest-grid">
-        <article class="interest-card interest-card--spell reveal" tabindex="0">
+        <article class="interest-card interest-card--spell reveal">
           <div class="spell-art" aria-hidden="true"></div>
           <span class="spell-symbols" aria-hidden="true">☽ ✶ ☾<br>ᛟ ᛉ ᚷ</span>
           <div class="interest-card__top">
@@ -1105,11 +1140,12 @@
           <div class="interest-card__bottom">
             <h3>Magia &amp; feitiços</h3>
             <p class="interest-card__copy">Dizem que todo feitiço cobra seu preço. O meu foi gostar da sua companhia e não querer desfazer o encanto.</p>
-            <span class="card-prompt">Toque para revelar</span>
+            <p class="card-reveal" id="spell-reveal" hidden>O feitiço mais bonito? Encontrar magia nas coisas simples quando estou com você.</p>
+            <button class="card-prompt" type="button" aria-controls="spell-reveal" aria-expanded="false">Toque para revelar</button>
           </div>
         </article>
 
-        <article class="interest-card interest-card--horror reveal" tabindex="0">
+        <article class="interest-card interest-card--horror reveal">
           <div class="hotel-art" aria-hidden="true"></div>
           <div class="interest-card__top">
             <span>Registro noturno</span>
@@ -1118,7 +1154,8 @@
           <div class="interest-card__bottom">
             <h3>Terror &amp; hotéis assombrados</h3>
             <p class="interest-card__copy">Cinco noites, corredores escuros. Com você na equipe, até a vigília parece menos longa.</p>
-            <span class="card-prompt">Sinal instável</span>
+            <p class="card-reveal" id="horror-reveal" hidden>Mesmo no corredor mais escuro, seu sinal é o que me guia de volta.</p>
+            <button class="card-prompt" type="button" aria-controls="horror-reveal" aria-expanded="false">Toque para sintonizar</button>
           </div>
         </article>
       </div>
@@ -1178,7 +1215,7 @@
       boot.setAttribute("aria-hidden", "true");
     }, 3000);
 
-    const message = "No meio de noites estranhas e histórias sombrias, gosto de ter você por perto. Dividir o tempo com você deixa os dias melhores e os pesadelos menos convincentes.";
+    const message = "E, vida... Finalmente deu certo. Depois de tantas coisas, amores e sentimentos, agora posso te chamar de meu amor, meu namorado, minha vida. Só quero te dizer que eu te amo. Minha vida contigo fica mais leve. Gosto de te admirar, às vezes discretamente e às vezes não. Não vou mentir: eu sempre te amei, mas nem eu sabia que era tanto amor assim. Agora tenho absoluta certeza: nunca amei alguém de verdade, pois ninguém chegou perto de um centésimo do amor que sinto por você. Vida, eu realmente te amo, e acho que nem vou saber o quanto. Às vezes me pego rindo do nada das bobeiras que você fala, imaginando nossa vida juntos. Eu te amo, meu amor. Você é toda a minha vida e nem sabe.";
     let typingStarted = false;
 
     function typeMessage() {
@@ -1210,6 +1247,20 @@
     }, { threshold: 0.18 });
 
     document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
+
+    document.querySelectorAll(".interest-card").forEach((card) => {
+      const toggle = card.querySelector(".card-prompt");
+      const reveal = document.getElementById(toggle.getAttribute("aria-controls"));
+      toggle.addEventListener("click", () => {
+        const isExpanded = toggle.getAttribute("aria-expanded") !== "true";
+        reveal.hidden = !isExpanded;
+        toggle.setAttribute("aria-expanded", String(isExpanded));
+        toggle.textContent = isExpanded
+          ? (card.classList.contains("interest-card--spell") ? "Ocultar revelação" : "Ocultar sinal")
+          : (card.classList.contains("interest-card--spell") ? "Toque para revelar" : "Toque para sintonizar");
+        card.classList.toggle("is-active", isExpanded);
+      });
+    });
 
     const heartPattern = [
       "011001100",
